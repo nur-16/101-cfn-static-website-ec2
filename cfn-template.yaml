@@ -1,8 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: |
-  This CloudFormation Template was written for running Kittens Carousel Static Website on EC2. 
-  Kittens Carousel Static Website will be deployed on Amazon Linux 2023 EC2 Instance with custom 
-  security group which allows http connections on port 80 and ssh port 22 from anywhere. Kittens Carousel Static Website
+Description:  
+  This CloudFormation Template was written for running Kittens Carousel Static Website on EC2. Kittens Carousel Static Website will be deployed on Amazon Linux 2023 EC2 Instance with custom security group which allows http connections on port 80 and ssh port 22 from anywhere. Kittens Carousel Static Website
   is downloaded from my Public Github repository, then deployed on Apache Web Server.
 Parameters:
   imageID:
@@ -11,19 +9,20 @@ Parameters:
   keyPair:
     Description: Choose your keypair
     Type: AWS::EC2::KeyPair::KeyName
-    Default: ottoaws9
+    Default: firstkey
 
   instanceType:
-    Description: Choose your instance type
+    Description: choose your instance type
     Type: String
     Default: t2.micro
     AllowedValues:
       - t2.micro
       - t3.micro
       - t2.large
-
+  
 Resources:
   
+
   myWebServer:
     Type: AWS::EC2::Instance
     Properties:
@@ -39,7 +38,7 @@ Resources:
         #! /bin/bash
         dnf update -y
         dnf install httpd -y
-        FOLDER="https://raw.githubusercontent.com/awsdevopsteam/101-cfn-static-website-ec2/master/static-web"
+        FOLDER="https://raw.githubusercontent.com/nur-16/101-cfn-static-website-ec2/main/static-web"
         cd /var/www/html
         wget ${FOLDER}/index.html
         wget ${FOLDER}/cat0.jpg
@@ -48,21 +47,23 @@ Resources:
         wget ${FOLDER}/cat3.png
         systemctl start httpd
         systemctl enable httpd
-
+      
   mySecGrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: ssh and http # Required
-      GroupName: osvaldo-kitten-project-scgrp
+      GroupName: nur-kitten-project-scgrp
       SecurityGroupIngress: 
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 80
           CidrIp: 0.0.0.0/0
+      
+     
 
 Outputs:
   webSiteURL:
     Description: URL of website
-    Value: !Sub
+    Value:  !Sub 
       - http://${PublicDNS}
       - PublicDNS: !GetAtt myWebServer.PublicDnsName
